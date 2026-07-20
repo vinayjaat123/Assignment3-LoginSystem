@@ -63,3 +63,8 @@ frontend/images/
 
 Note:
 This project was reviewed, tested, and revised before final submission. Passwords are stored using bcrypt hashing instead of plain text. A future improvement would be session-based authentication for stronger route protection.
+git checkout feature/login-validation-testing
+echo "Assignment 3 validation update" >> README.txt
+git add README.txt
+git commit -m "Add assignment 3 note"
+git push
