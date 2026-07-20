@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login System</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: url("./images/pexels-no-name-14543-66997.jpg") no-repeat center center/cover;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 500px;
+      background: rgba(255, 255, 255, 0.93);
+      padding: 40px 30px;
+      border-radius: 20px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+    }
+
+    h1, h2 {
+      text-align: center;
+      margin-top: 0;
+      color: #222;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      margin: 12px 0;
+      border: 1px solid #cfcfcf;
+      border-radius: 10px;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      margin-top: 8px;
+      border: none;
+      border-radius: 10px;
+      background: #3e7be6;
+      color: white;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #2f68cc;
+    }
+
+    .message {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 16px;
+      font-weight: bold;
+      color: #222;
+      min-height: 24px;
+    }
+
+    .section {
+      margin-bottom: 30px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="section">
+      <h1>Register</h1>
+      <input type="email" id="registerEmail" placeholder="Enter email" />
+      <input type="password" id="registerPassword" placeholder="Enter password" />
+      <button onclick="registerUser()">Register</button>
+    </div>
+
+    <div class="section">
+      <h2>Login</h2>
+      <input type="email" id="loginEmail" placeholder="Enter email" />
+      <input type="password" id="loginPassword" placeholder="Enter password" />
+      <button onclick="loginUser()">Login</button>
+    </div>
+
+    <div id="message" class="message"></div>
+  </div>
+
+  <script>
+    function isValidEmail(email) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
+    function isValidPassword(password) {
+      return password.length >= 6 && password.length <= 20;
+    }
+
+    async function registerUser() {
+      const email = document.getElementById("registerEmail").value.trim();
+      const password = document.getElementById("registerPassword").value.trim();
+      const messageBox = document.getElementById("message");
+
+      messageBox.innerText = "";
+
+      if (!email || !password) {
+        messageBox.innerText = "Email and password are required.";
+        return;
+      }
+
+      if (!isValidEmail(email)) {
+        messageBox.innerText = "Please enter a valid email address.";
+        return;
+      }
+
+      if (!isValidPassword(password)) {
+        messageBox.innerText = "Password must be 6 to 20 characters long.";
+        return;
+      }
+
+      try {
+        const response = await fetch("/register", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await response.json();
+        messageBox.innerText = data.message;
+
+        if (response.ok) {
+          document.getElementById("registerEmail").value = "";
+          document.getElementById("registerPassword").value = "";
+        }
+      } catch (error) {
+        messageBox.innerText = "Unable to connect to server.";
+      }
+    }
+
+    async function loginUser() {
+      const email = document.getElementById("loginEmail").value.trim();
+      const password = document.getElementById("loginPassword").value.trim();
+      const messageBox = document.getElementById("message");
+
+      messageBox.innerText = "";
+
+      if (!email || !password) {
+        messageBox.innerText = "Email and password are required.";
+        return;
+      }
+
+      if (!isValidEmail(email)) {
+        messageBox.innerText = "Please enter a valid email address.";
+        return;
+      }
+
+      if (!isValidPassword(password)) {
+        messageBox.innerText = "Password must be 6 to 20 characters long.";
+        return;
+      }
+
+      try {
+        const response = await fetch("/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await response.json();
+        messageBox.innerText = data.message;
+
+        if (response.ok) {
+          window.location.href = `/dashboard.html?user=${encodeURIComponent(data.email)}`;
+        }
+      } catch (error) {
+        messageBox.innerText = "Unable to connect to server.";
+      }
+    }
+  </script>
+</body>
+</html>
